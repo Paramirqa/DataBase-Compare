@@ -9,6 +9,7 @@ import (
 	jsoniter "github.com/json-iterator/go"
 )
 
+// DBReader - интерфейс для чтения баз данных
 type DBReader interface {
 	Parse(data []byte) (Recipe, error)
 }
@@ -16,6 +17,7 @@ type DBReader interface {
 // JSONParser - структура для парсинга JSON
 type JSONParser struct{}
 
+// Parse func (jp *JSONParser) - функция для парсинга JSON
 func (jp *JSONParser) Parse(data []byte) (Recipe, error) {
 	var recipe Recipe
 	var json = jsoniter.ConfigCompatibleWithStandardLibrary
@@ -26,6 +28,7 @@ func (jp *JSONParser) Parse(data []byte) (Recipe, error) {
 // XMLParser - структура для парсинга XML
 type XMLParser struct{}
 
+// Parse func (xp *XMLParser) - функция для парсинга XML
 func (xp *XMLParser) Parse(data []byte) (Recipe, error) {
 	var recipe Recipe
 	err := xml.Unmarshal(data, &recipe)
@@ -60,6 +63,8 @@ func DetectFormatFromExtension(path string) string {
 		return ""
 	}
 }
+
+// IsSupportedFormat - функция для проверки разрешенных типов данных
 func IsSupportedFormat(format string) bool {
 	switch format {
 	case "json", "xml":
