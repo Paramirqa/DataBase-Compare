@@ -1,0 +1,32 @@
+stages:
+ - build
+ - test
+
+build:
+  stage: build
+  script:
+    - cd src
+    - mkdir -p bin
+    - make build
+    - ls -l bin
+  artifacts:
+    paths:
+      - src/bin/
+    expire_in: 1 week
+
+test_code_style:
+  stage: test
+  script: 
+  - cd src
+  - make golint
+  allow_failure: false
+
+integration test:
+  stage: test
+  script:
+    - cd src
+    - make tests
+  needs:
+    - build
+    - test_code_style
+  allow_failure: false
