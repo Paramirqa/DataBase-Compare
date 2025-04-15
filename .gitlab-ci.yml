@@ -1,32 +1,43 @@
-stages:
- - build
- - test
+image: golang:1.21
 
+variables:
+  GOCACHE: "$CI_PROJECT_DIR/.cache/go-build"  # ускоряет сборку
+  GOFLAGS: "-mod=readonly"
+
+stages:
+  - build
+  - test
+  - lint
+
+before_script:
+  - go version
+  - mkdir -p bin
+
+# Сборка всех бинарников
 build:
   stage: build
   script:
     - cd src
-    - mkdir -p bin
     - make build
-    - ls -l bin
+    - ls -lh bin
   artifacts:
     paths:
       - src/bin/
     expire_in: 1 week
 
-test_code_style:
-  stage: test
-  script: 
-  - cd src
-  - make golint
-  allow_failure: false
-
-integration test:
+unit_tests:
   stage: test
   script:
     - cd src
     - make tests
-  needs:
-    - build
-    - test_code_style
+  needs: [build]
+  allow_failure: false
+
+# Проверка форматирования и lint
+code_style:
+  stage: lint
+  script:
+    - cd src
+    - make fmt
+    - make lint
   allow_failure: false
