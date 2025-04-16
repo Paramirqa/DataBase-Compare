@@ -11,6 +11,7 @@ stages:
 
 before_script:
   - go version
+  - pwd
   - mkdir -p bin
 
 # Сборка всех бинарников
