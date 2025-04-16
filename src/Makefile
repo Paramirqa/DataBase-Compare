@@ -1,5 +1,6 @@
 BIN_DIR := ./bin
 COMPARE_CMD := ./cmd/compare
+READING_CMD := ./cmd/reading
 FS_CMD := ./cmd/fs
 
 BIN_NAME := readDB
@@ -9,7 +10,7 @@ FS_NAME := compareFS
 all: readDB compareDB compareFS
 
 readDB:
-	go build -o $(BIN_DIR)/$(BIN_NAME) ./cmd
+	go build -o $(BIN_DIR)/$(BIN_NAME) $(READING_CMD)
 
 compareDB:
 	go build -o $(BIN_DIR)/$(COMPARE_NAME) $(COMPARE_CMD)
