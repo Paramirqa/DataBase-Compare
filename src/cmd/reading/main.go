@@ -9,10 +9,19 @@ import (
 	"strings"
 )
 
+var version = "dev"
+var buildTime = "unknown"
+
 func main() {
+	versionFlag := flag.Bool("version", false, "Print version information and exit")
 	filePath := flag.String("f", "", "Path to the input file (JSON or XML)")
 	formatFlag := flag.String("format", "", "Optional format override (json or xml)")
 	flag.Parse()
+
+	if *versionFlag {
+		fmt.Printf("Version: %s\nBuild Time: %s\n", version, buildTime)
+		return
+	}
 
 	if *filePath == "" {
 		log.Fatal("Please provide a file path using -f flag")

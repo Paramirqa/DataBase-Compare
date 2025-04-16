@@ -4,6 +4,13 @@ variables:
   GOCACHE: "$CI_PROJECT_DIR/.cache/go-build"  # ускоряет сборку
   GOFLAGS: "-mod=readonly"
 
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - .cache/go-build
+    - go.sum
+    - go.mod
+
 stages:
   - build
   - test
@@ -14,6 +21,7 @@ before_script:
   - go install honnef.co/go/tools/cmd/staticcheck@latest
   - export PATH="$PATH:$(go env GOPATH)/bin"
   - mkdir -p bin
+  - pwd
 
 # Сборка всех бинарников
 build:
@@ -39,6 +47,18 @@ unit_tests:
   needs: [build]
   allow_failure: false
 
+test_coverage:
+  stage: test
+  needs: [build]
+  script:
+    - cd src
+    - make test-cover
+  artifacts:
+    paths:
+      - src/cover.out
+      - src/coverage.html
+  coverage: '/total:\s+\(statements\)\s+(\d+\.\d+)%/'
+
 # Проверка форматирования и lint
 code_style:
   stage: lint
@@ -46,6 +66,34 @@ code_style:
     - cd src
     - make fmt
     - make lint
+    - make fmt-check
   tags:
     - s21
   allow_failure: false
+  rules:
+    - changes:
+        - "**/*.go"
+
+lint_readDB:
+  stage: lint
+  script:
+    - cd src
+    - make lint-readDB
+
+lint_compareDB:
+  stage: lint
+  script:
+    - cd src
+    - make lint-compareDB
+
+lint_compareFS:
+  stage: lint
+  script:
+    - cd src
+    - make lint-compareFS
+
+check_mod:
+  stage: lint
+  script:
+    - go mod tidy
+    - git diff --exit-code go.mod go.sum || (echo "go.mod/sum not tidy" && exit 1)
