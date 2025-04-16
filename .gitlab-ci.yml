@@ -11,6 +11,10 @@ cache:
     - go.sum
     - go.mod
 
+default:
+  tags:
+    - s21
+
 stages:
   - build
   - test
@@ -30,8 +34,6 @@ build:
     - cd src
     - make build
     - ls -lh bin
-  tags:
-    - s21
   artifacts:
     paths:
       - src/bin/
@@ -42,8 +44,6 @@ unit_tests:
   script:
     - cd src
     - make tests
-  tags:
-    - s21
   needs: [build]
   allow_failure: false
 
@@ -53,8 +53,6 @@ test_coverage:
   script:
     - cd src
     - make test-cover
-  tags:
-    - s21
   artifacts:
     paths:
       - src/cover.out
@@ -69,8 +67,6 @@ code_style:
     - make fmt
     - make lint
     - make fmt-check
-  tags:
-    - s21
   allow_failure: false
   rules:
     - changes:
@@ -81,29 +77,21 @@ lint_readDB:
   script:
     - cd src
     - make lint-readDB
-  tags:
-    - s21
 
 lint_compareDB:
   stage: lint
   script:
     - cd src
     - make lint-compareDB
-  tags:
-    - s21
 
 lint_compareFS:
   stage: lint
   script:
     - cd src
     - make lint-compareFS
-  tags:
-    - s21
 
 check_mod:
   stage: lint
   script:
     - go mod tidy
     - git diff --exit-code go.mod go.sum || (echo "go.mod/sum not tidy" && exit 1)
-  tags:
-    - s21
