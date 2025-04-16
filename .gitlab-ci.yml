@@ -20,6 +20,8 @@ build:
     - cd src
     - make build
     - ls -lh bin
+  tags:
+    - s21
   artifacts:
     paths:
       - src/bin/
@@ -30,6 +32,8 @@ unit_tests:
   script:
     - cd src
     - make tests
+  tags:
+    - s21
   needs: [build]
   allow_failure: false
 
@@ -40,4 +44,6 @@ code_style:
     - cd src
     - make fmt
     - make lint
+  tags:
+    - s21
   allow_failure: false
