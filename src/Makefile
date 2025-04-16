@@ -24,7 +24,7 @@ compareFS:
 build: all
 
 clean:
-	rm -f $(BIN_DIR)/$(BIN_NAME) $(BIN_DIR)/$(COMPARE_NAME) $(BIN_DIR)/$(FS_NAME)
+	rm -f $(BIN_DIR)/$(BIN_NAME) $(BIN_DIR)/$(COMPARE_NAME) $(BIN_DIR)/$(FS_NAME) cover.out coverage.html
 
 rebuild: clean
 	$(MAKE) build
