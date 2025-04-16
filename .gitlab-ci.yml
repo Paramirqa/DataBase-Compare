@@ -1,4 +1,4 @@
-image: golang:1.22.3
+image: golang:1.23.8
 
 variables:
   GOCACHE: "$CI_PROJECT_DIR/.cache/go-build"  # ускоряет сборку
@@ -11,7 +11,8 @@ stages:
 
 before_script:
   - go version
-  - pwd
+  - go install honnef.co/go/tools/cmd/staticcheck@latest
+  - export PATH="$PATH:$(go env GOPATH)/bin"
   - mkdir -p bin
 
 # Сборка всех бинарников
