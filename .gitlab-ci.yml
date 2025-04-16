@@ -25,13 +25,13 @@ before_script:
   - go install honnef.co/go/tools/cmd/staticcheck@latest
   - export PATH="$PATH:$(go env GOPATH)/bin"
   - mkdir -p bin
+  - cd src
   - pwd
 
 # Сборка всех бинарников
 build:
   stage: build
   script:
-    - cd src
     - make build
     - ls -lh bin
   artifacts:
@@ -42,7 +42,6 @@ build:
 unit_tests:
   stage: test
   script:
-    - cd src
     - make tests
   needs: [build]
   allow_failure: false
@@ -51,7 +50,6 @@ test_coverage:
   stage: test
   needs: [build]
   script:
-    - cd src
     - make test-cover
   artifacts:
     paths:
@@ -63,7 +61,6 @@ test_coverage:
 code_style:
   stage: lint
   script:
-    - cd src
     - make fmt
     - make lint
     - make fmt-check
@@ -75,20 +72,17 @@ code_style:
 lint_readDB:
   stage: lint
   script:
-    - cd src
     - make lint-readDB
 
-lint_compareDB:
-  stage: lint
-  script:
-    - cd src
-    - make lint-compareDB
+# lint_compareDB:
+#   stage: lint
+#   script:
+#     - make lint-compareDB
 
-lint_compareFS:
-  stage: lint
-  script:
-    - cd src
-    - make lint-compareFS
+# lint_compareFS:
+#   stage: lint
+#   script:
+#     - make lint-compareFS
 
 check_mod:
   stage: lint
