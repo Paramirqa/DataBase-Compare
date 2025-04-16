@@ -7,7 +7,7 @@ BIN_NAME := readDB
 COMPARE_NAME := compareDB
 FS_NAME := compareFS
 
-all: readDB compareDB compareFS
+all: readDB 
 
 readDB:
 	go build -o $(BIN_DIR)/$(BIN_NAME) $(READING_CMD)
