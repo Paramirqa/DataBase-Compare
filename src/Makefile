@@ -75,3 +75,6 @@ test-cover-html: test-cover
 	else \
 		echo "coverage.html сгенерирован, но не удалось открыть автоматически."; \
 	fi
+
+run-compare: compareDB
+	$(BIN_DIR)/$(COMPARE_NAME) --old assets/original_database.xml --new assets/stolen_database.json
