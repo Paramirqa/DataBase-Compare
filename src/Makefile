@@ -78,3 +78,6 @@ test-cover-html: test-cover
 
 run-compare: compareDB
 	$(BIN_DIR)/$(COMPARE_NAME) --old assets/original_database.xml --new assets/stolen_database.json
+
+server:
+	go run ./cmd/server
