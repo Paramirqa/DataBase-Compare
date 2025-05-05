@@ -10,7 +10,7 @@ FS_NAME := compareFS
 VERSION := $(shell git rev-parse --short HEAD)
 BUILD_TIME := $(shell date -u +%Y-%m-%dT%H:%M:%SZ)
 
-all: readDB 
+all: readDB compareDB
 
 readDB:
 	go build -ldflags "-X main.version=$(VERSION) -X main.buildTime=$(BUILD_TIME)" -o $(BIN_DIR)/$(BIN_NAME) $(READING_CMD)

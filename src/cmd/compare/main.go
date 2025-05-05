@@ -2,6 +2,7 @@ package main
 
 import (
 	"Go_day01-1/nydiamig/internal/parser"
+	"encoding/json"
 	"flag"
 	"fmt"
 	"log"
@@ -14,7 +15,8 @@ var buildTime = "unknown"
 
 func main() {
 	versionFlag := flag.Bool("version", false, "Print version information and exit")
-	filePath := flag.String("f", "", "Path to the input file (JSON or XML)")
+	oldFile := flag.String("old", "", "Path to the old database file (JSON or XML)")
+	newFile := flag.String("new", "", "Path to the new database file (JSON or XML)")
 	formatFlag := flag.String("format", "", "Optional format override (json or xml)")
 	flag.Parse()
 
@@ -22,27 +24,48 @@ func main() {
 		fmt.Printf("Version: %s\nBuild Time: %s\n", version, buildTime)
 		return
 	}
-	if *filePath == "" {
-		log.Fatal("Please provide a file path using -f flag")
+	if *oldFile == "" || *newFile == "" {
+		log.Fatal("Please provide both --old and --new file paths")
 	}
 
-	data, err := os.ReadFile(*filePath)
+	oldRecipe, err := loadRecipe(*oldFile, *formatFlag)
 	if err != nil {
-		log.Fatalf("Failed to read file %s: %v", *filePath, err)
+		log.Fatalf("Error loading old database: %v", err)
 	}
 
-	// Определение формата
-	format := strings.ToLower(*formatFlag)
+	newRecipe, err := loadRecipe(*newFile, *formatFlag)
+	if err != nil {
+		log.Fatalf("Error loading new database: %v", err)
+	}
+
+	diff := parser.CompareRecipes(oldRecipe, newRecipe)
+
+	output, err := json.MarshalIndent(diff, "", "  ")
+	if err != nil {
+		log.Fatalf("Failed to marshal diff to JSON: %v", err)
+	}
+
+	fmt.Println(string(output))
+}
+
+func loadRecipe(filePath, formatOverride string) (parser.Recipe, error) {
+	data, err := os.ReadFile(filePath)
+	if err != nil {
+		return parser.Recipe{}, fmt.Errorf("failed to read file %s: %w", filePath, err)
+	}
+
+	format := strings.ToLower(formatOverride)
 	if format == "" {
-		format = parser.DetectFormatFromExtension(*filePath)
+		format = parser.DetectFormatFromExtension(filePath)
 	}
 	if !parser.IsSupportedFormat(format) {
-		log.Fatalf("Unsupported or unknown file format: %s", format)
+		return parser.Recipe{}, fmt.Errorf("unsupported or unknown file format: %s", format)
 	}
 
-	// Парсинг
 	recipe, err := parser.ParseData(format, data)
 	if err != nil {
-		log.Fatalf("Failed to parse %s file: %v", format, err)
+		return parser.Recipe{}, fmt.Errorf("failed to parse %s file: %w", format, err)
 	}
+
+	return recipe, nil
 }

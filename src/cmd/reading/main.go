@@ -22,32 +22,36 @@ func main() {
 		fmt.Printf("Version: %s\nBuild Time: %s\n", version, buildTime)
 		return
 	}
-
 	if *filePath == "" {
 		log.Fatal("Please provide a file path using -f flag")
 	}
 
-	data, err := os.ReadFile(*filePath)
+	if err := processAndDisplayDatabase(*filePath, *formatFlag); err != nil {
+		log.Fatalf("Error: %v", err)
+	}
+}
+
+// processAndDisplayDatabase читает, парсит и красиво выводит базу
+func processAndDisplayDatabase(filePath, formatOverride string) error {
+	data, err := os.ReadFile(filePath)
 	if err != nil {
-		log.Fatalf("Failed to read file %s: %v", *filePath, err)
+		return fmt.Errorf("failed to read file %s: %w", filePath, err)
 	}
 
-	// Определение формата
-	format := strings.ToLower(*formatFlag)
+	format := strings.ToLower(formatOverride)
 	if format == "" {
-		format = parser.DetectFormatFromExtension(*filePath)
+		format = parser.DetectFormatFromExtension(filePath)
 	}
 	if !parser.IsSupportedFormat(format) {
-		log.Fatalf("Unsupported or unknown file format: %s", format)
+		return fmt.Errorf("unsupported or unknown file format: %s", format)
 	}
 
-	// Парсинг
 	recipe, err := parser.ParseData(format, data)
 	if err != nil {
-		log.Fatalf("Failed to parse %s file: %v", format, err)
+		return fmt.Errorf("failed to parse %s file: %w", format, err)
 	}
 
-	// Вывод результата
+	// Печатаем результат
 	fmt.Println("Parsed Data:")
 	for _, cake := range recipe.Cakes {
 		fmt.Printf("Cake: %s, Time: %s\n", cake.Name, cake.Time)
@@ -59,4 +63,6 @@ func main() {
 			}
 		}
 	}
+
+	return nil
 }
