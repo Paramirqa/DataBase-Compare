@@ -46,6 +46,7 @@ func main() {
 	}
 
 	fmt.Println(string(output))
+	PrintHumanReadableDiff(diff)
 }
 
 func loadRecipe(filePath, formatOverride string) (parser.Recipe, error) {
@@ -68,4 +69,34 @@ func loadRecipe(filePath, formatOverride string) (parser.Recipe, error) {
 	}
 
 	return recipe, nil
+}
+
+func PrintHumanReadableDiff(diff parser.DiffResult) {
+	for _, cakeDiff := range diff.CakeDiffs {
+		switch {
+		case cakeDiff.MissingInFirst:
+			fmt.Printf("ADDED cake \"%s\"\n", cakeDiff.CakeName)
+		case cakeDiff.MissingInSecond:
+			fmt.Printf("REMOVED cake \"%s\"\n", cakeDiff.CakeName)
+		default:
+			if cakeDiff.TimeDifference != "" {
+				fmt.Printf("CHANGED cooking time for cake \"%s\" - %s\n", cakeDiff.CakeName, cakeDiff.TimeDifference)
+			}
+			for _, ingredientDiff := range cakeDiff.IngredientDiffs {
+				switch {
+				case ingredientDiff.MissingInFirst:
+					fmt.Printf("ADDED ingredient \"%s\" for cake \"%s\"\n", ingredientDiff.Name, cakeDiff.CakeName)
+				case ingredientDiff.MissingInSecond:
+					fmt.Printf("REMOVED ingredient \"%s\" for cake \"%s\"\n", ingredientDiff.Name, cakeDiff.CakeName)
+				default:
+					if ingredientDiff.UnitDifference != "" {
+						fmt.Printf("CHANGED unit for ingredient \"%s\" for cake \"%s\" - %s\n", ingredientDiff.Name, cakeDiff.CakeName, ingredientDiff.UnitDifference)
+					}
+					if ingredientDiff.CountDifference != "" {
+						fmt.Printf("CHANGED unit count for ingredient \"%s\" for cake \"%s\" - %s\n", ingredientDiff.Name, cakeDiff.CakeName, ingredientDiff.CountDifference)
+					}
+				}
+			}
+		}
+	}
 }
