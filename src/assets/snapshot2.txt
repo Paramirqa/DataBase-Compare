@@ -8,3 +8,5 @@
 /home/user/music/song.mp3
 /var/log/syslog
 /var/log/auth.log
+/var/log/syslog/qweqwewrtyhfgdv.txt
+
