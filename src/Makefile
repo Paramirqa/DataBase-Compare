@@ -10,7 +10,7 @@ FS_NAME := compareFS
 VERSION := $(shell git rev-parse --short HEAD)
 BUILD_TIME := $(shell date -u +%Y-%m-%dT%H:%M:%SZ)
 
-all: readDB compareDB
+all: readDB compareDB compareFS
 
 readDB:
 	go build -ldflags "-X main.version=$(VERSION) -X main.buildTime=$(BUILD_TIME)" -o $(BIN_DIR)/$(BIN_NAME) $(READING_CMD)
@@ -34,6 +34,10 @@ json: readDB
 
 xml: readDB
 	$(BIN_DIR)/$(BIN_NAME) -f assets/original_database.xml
+
+afterparty: compareFS
+	$(BIN_DIR)/$(FS_NAME) --old assets/snapshot1.txt --new assets/snapshot2.txt
+	
 
 fmt:
 	go fmt ./...
