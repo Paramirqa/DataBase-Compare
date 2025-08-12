@@ -1,0 +1,10 @@
+/etc/passwd
+/etc/hosts
+/etc/ssl/certs.pem
+/home/user/file2.txt
+/home/user/file3.txt
+/home/user/docs/report.docx
+/home/user/docs/summary.docx
+/home/user/music/song.mp3
+/var/log/syslog
+/var/log/auth.log
